@@ -1,6 +1,6 @@
 # Bot features
 
-This file contains a list with the entirety of Hermes' currently supported features, as well as a moderately-in-depth explanation for all of them.
+This file contains a list with the entirety of Hermes' currently supported features for students, as well as leaderboard visualizations. It also presents moderately-in-depth explanations for them.
 
 ## Table of contents
  1. [Sending programs to a queue](#sending)
