@@ -114,7 +114,8 @@ exports.run = async (bot, msg, args, file) => {
 		if (!table) {
 			if (server !== "") {
 				global.log(msg, server,
-					"@here **ERROR:** A user's Request couldn't reach the server."
+					"@here **ERROR:** A user's Request couldn't reach the server: " +
+					reqURL
 				);
 			}
 
