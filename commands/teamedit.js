@@ -20,7 +20,7 @@ exports.run = async (bot, msg, args) => {
 	const teamList = teamFiles.filter(team => RegExp(`^${process.env.TEAM_PRE}\\d+.json$`).test(team)
 		&& !team.includes("#"));
 
-	if (args.length < 1) {		
+	if (args.length < 1) {
 		return msg.reply(
 			`options: \`move, add, remove, setEditable/unconfirm, confirm, password/passwd/pass/pswd, <teamID>\`.`
 		);
@@ -258,6 +258,13 @@ exports.run = async (bot, msg, args) => {
 			}}
 
 		default:
+			if (args.length > 1) {
+				msg.reply(
+					`Detected extra arguments after the team ID. Those will be ignored.\n` +
+					`(Reminder of the command's structure; the team ID should go last: \`${process.env.PRE}teamedit [option] <teamID>\`.)`
+				);
+			}
+
 			tm = args[0];			
 			if (!teamList.includes(`${tm}.json`)) {
 				return msg.reply(
@@ -278,3 +285,5 @@ exports.run = async (bot, msg, args) => {
 			);
 	}
 }
+
+exports.requiresServerID = false;
