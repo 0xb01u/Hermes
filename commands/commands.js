@@ -1,5 +1,5 @@
 exports.run = async (bot, msg, args) => {
-	msg.channel.send(
+	msg.author.send(
 		"Here's a quick list of publicly available commands:\n" +
 		"`!team` to manage teams.\n" +
 		"`!config` to see your current default arguments for requests, including your team and password.\n" +
@@ -8,3 +8,5 @@ exports.run = async (bot, msg, args) => {
 		"If you have **any** doubt, ask the bot master directly. They will answer them as soon as they can, so don't be shy! :smile:"
 	);
 }
+
+exports.requiresServerID = false;
