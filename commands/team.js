@@ -243,8 +243,8 @@ exports.run = async (bot, msg, args, serverID) => {
 			let reqID = args[1];
 			if (!fs.existsSync(`./teams/${server}/${reqID}.json`)) {
 				return msg.author.send(
-					`It looks like you are trying to **accept** a member on team` +
-					`${userTeams[server]} on server ${serverName}, ` +
+					`It looks like you are trying to **accept** a member on team ` +
+					`${userTeams[server].team} on server ${serverName}, ` +
 					`but they didn't send any request to join it! Did you get the request number wrong?`
 				);
 			}
@@ -317,3 +317,5 @@ exports.run = async (bot, msg, args, serverID) => {
 			return;
 	}
 }
+
+exports.requiresServerID = true;
