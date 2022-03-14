@@ -25,8 +25,7 @@ class Team {
 
 			// Add to the server-name map:
 			let nameMap = JSON.parse(fs.readFileSync(`./teams/${this.server}/nameMap.json`));
-			nameMap[id] = this.name;
-			nameMap[this.name] = id;
+			nameMap[id] = this.id;
 			fs.writeFileSync(`./teams/${this.server}/nameMap.json`, JSON.stringify(nameMap, null, 2));
 		}
 	}
@@ -141,7 +140,12 @@ class Team {
 
 		this.save();
 
-		if (this.members.length === 0) this.delete();
+		if (this.members.length === 0) {
+			this.delete();
+			let nameMap = JSON.parse(fs.readFileSync(`./teams/${this.server}/nameMap.json`));
+			delete nameMap[this.id];
+			fs.writeFileSync(`./teams/${this.server}/nameMap.json`, JSON.stringify(nameMap, null, 2));
+		}
 
 		return true;
 	}
