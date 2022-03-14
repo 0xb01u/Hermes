@@ -49,3 +49,5 @@ exports.run = async (bot, msg, args) => {
 		`correctly sent your message to: ${userSent}`
 	);	
 }
+
+exports.requiresServerID = false;

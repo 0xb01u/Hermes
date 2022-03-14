@@ -23,7 +23,13 @@ exports.run = async (bot, msg, args) => {
 					``) +
 			(student.preferredQueue != null ?
 				` - Default queue: ${student.preferredQueue}\n` :
+				``) + 
+			(Object.keys(student.aliases).length > 1 ?
+			` - Available servers and aliases: ${String(Object.keys(student.aliases))
+				.replaceAll("_", "\\_").replaceAll(",", ", ")}` :
 				``)
 		);
 	}
 }
+
+exports.requiresServerID = false;

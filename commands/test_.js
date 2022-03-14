@@ -159,3 +159,5 @@ exports.run = async (bot, msg, args, file) => {
 		}
 	}
 }
+
+exports.requiresServerID = false;

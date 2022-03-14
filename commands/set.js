@@ -10,7 +10,7 @@ exports.run = async (bot, msg, args) => {
 	if (args.length < 1) {
 		return msg.reply("please, choose what option you want to set:\n"
 			+ `\`${process.env.PRE}set [server|queue]\`\n\n`
-			+ `Use \`${process.env.PRE}set help\` for help`);
+			+ `Use \`${process.env.PRE}set help\` for help.`);
 	}
 
 	let user = msg.author.id;
@@ -44,7 +44,9 @@ exports.run = async (bot, msg, args) => {
 		case "queue":
 			student.setQueue(args[1]);
 			return msg.author.send(
-				`Succesfully changed your default queue to ${args[1]}.`
+				(args.length > 1 ?
+					`Succesfully changed your default queue to ${args[1]}.` :
+					`Succesfully removed your default queue.`)
 			);
 
 		case "help":
@@ -58,8 +60,8 @@ exports.run = async (bot, msg, args) => {
 			+ "`queue` sets the default queue to send programs to. "
 			+ "So you won't need to write `-q [queue]` all the time!\n\n"
 			+ "If you send a program specifying any option (team, password or queue) "
-			+ "different than the default ones, I will use those ones and not the defaults!\n\n"
-			+ `Oh, and \`${process.env.PRE}config\` can be used as an alias for \`${process.env.PRE}set\``
+			+ "different than the default ones, I will use those and not the defaults!\n\n"
+			+ `Oh, and \`${process.env.PRE}config\` can be used as an alias for \`${process.env.PRE}set\` `
 			+ "(but not the other way round)."
 			);
 			
@@ -68,3 +70,5 @@ exports.run = async (bot, msg, args) => {
 				+ `Use \`${process.env.PRE}set help\` for help.`)
 	}
 }
+
+exports.requiresServerID = false;

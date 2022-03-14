@@ -79,3 +79,5 @@ exports.run = async (bot, msg, args) => {
 		delete env;
 	}
 }
+
+exports.requiresServerID = false;

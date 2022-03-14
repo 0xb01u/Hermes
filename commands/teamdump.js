@@ -77,3 +77,5 @@ exports.run = async (bot, msg, args) => {
 	let att = new MessageAttachment(`./teams/${msg.guild.id}/teamList.txt`);
 	msg.channel.send("List of teams on the server:", att);
 }
+
+exports.requiresServerID = false;

@@ -82,3 +82,5 @@ exports.run = async (bot, msg, args, serverID) => {
 	}
 	return;
 }
+
+exports.requiresServerID = false;

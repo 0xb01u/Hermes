@@ -31,3 +31,5 @@ exports.run = async (bot, msg, args) => {
 	//msg.delete();
 	channel.send(args.join(" "));
 }
+
+exports.requiresServerID = false;

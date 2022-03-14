@@ -248,6 +248,14 @@ bot.on("message", async msg => {
 			let guildName = args[0];
 			if (guildName in student.aliases) {
 				serverID = student.aliases[args.shift()];
+			} else if (require(`./commands/${cmd}.js`).requiresServerID) {
+				return msg.reply(
+					`unknown server alias: \`${guildName}\`.\nMaybe try using the name of the server but replacing ` +
+					`all the spaces by underscores (\`\_\`). For example: if the name of the server is ` + 
+					`\`UVa - Server 1\`, use \`UVa_-_Server_1\` as the alias.\n` +
+					`Also, revise you wrote the alias correctly. Maybe you used uppercase where it should be ` +
+					`lowercase, or the other way round.`
+				);
 			}
 		} else {
 			serverID = msg.guild.id;
@@ -601,13 +609,18 @@ global.getStudent = function getStudent(userID) {
 global.getTeam = function getTeam(tm, guildID) {
 	let team = tm;
 	if (!fs.existsSync(`./teams/${guildID}/${team}.json`)) {
+		team = null;
 		let nameMap = JSON.parse(fs.readFileSync(`./teams/${guildID}/nameMap.json`));
 
 		// The name of the team was provided:
-		if (tm in nameMap) {
-			team = nameMap[tm];
-		} else {
-			// Exception.
+		for (let tmID in nameMap) {
+			if (tm == nameMap[tmID]) {
+				team = tmID;
+				break;
+			}
+		}
+		if (team == null) {
+			// Exception: Team not found.
 			return null;
 		}
 	}
