@@ -39,16 +39,15 @@ class TeamConfirmation {
 		for (let m of this.delegates) {
 			let member = await bot.users.fetch(m);
 			member.send(
-				`<@${this.usr}> (${user.username}#${user.discriminator}) wants to join team ${this.tm.name} on the server ${(await bot.guilds.fetch(this.server)).name}.\n` +
+				`<@${this.usr}> (${user.username.replaceAll("_", "\\_")}#${user.discriminator}) wants to join team ${this.tm.name} on the server ${(await bot.guilds.fetch(this.server)).name}.\n` +
 				`To accept them, send \`${process.env.PRE}team ${serverName} accept ${this.tm.id}#${this.usr}\` to me (**in this channel**).\n` +
 				`To reject and delete the request, send \`${process.env.PRE}team ${serverName} reject ${this.tm.id}#${this.usr}\` instead` +
 				((this.delegates.size > 1) ? ` (it can't be undone by any other team member.)` : `.`)
 			);
-			reply += `<@${m}>\n`;
+			reply += `<@${m}> (${member.username.replaceAll("_", "\\_")}#${member.discriminator})\n`;
 		}
 
 		user.send(reply);
-
 
 		// TODO: account for errors fetching users?
 		this.requestSent = true;
