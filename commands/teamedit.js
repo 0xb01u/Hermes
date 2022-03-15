@@ -194,7 +194,7 @@ exports.run = async (bot, msg, args) => {
 				//msg.delete();
 				return msg.reply(
 					`you have to specify a team and its new password: ` +
-					`\`${process.env.PRE}teamedit ${args[1]} <teamID> <newPassword>\`.`
+					`\`${process.env.PRE}teamedit ${args[0]} <teamID> <newPassword>\`.`
 				);
 			}
 
@@ -261,7 +261,7 @@ exports.run = async (bot, msg, args) => {
 			if (args.length > 1) {
 				msg.reply(
 					`Detected extra arguments after the team ID. Those will be ignored.\n` +
-					`(Reminder of the command's structure; the team ID should go last: \`${process.env.PRE}teamedit [option] <teamID>\`.)`
+					`(Reminder of the command's structure; the team ID should go second: \`${process.env.PRE}teamedit [option] <teamID> [args]\`.)`
 				);
 			}
 
