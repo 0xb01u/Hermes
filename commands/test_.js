@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 server = "";
 
@@ -33,7 +33,7 @@ exports.run = async (bot, msg, args, file) => {
 			);
 		// Check and use default user and password:
 		} else if ((!args.includes("-u"))) {
-			if (!student.preferredServer in student.credentials) {
+			if (!(student.preferredServer in student.credentials)) {
 				return msg.reply(
 					`**Error**: You must join a team before launching any request.`
 				);
@@ -81,7 +81,7 @@ exports.run = async (bot, msg, args, file) => {
 		}
 
 		//console.log(`python2 ./tools/client ./programs/${file} ${line}`);
-		let output = execSync(`python2 ./tools/client ./programs/${file} ${line}`);
+		let output = execFileSync(`./tools/client`, `./programs/${file} ${line}`.replaceAll(/ +/g, " ").split(" "));
 		fs.unlinkSync(`./programs/${file}`);
 		student.setCommand(line);
 		let outputContent = output.toString().split("\n").filter(line => line.indexOf("ing ") < 0).join("\n");
