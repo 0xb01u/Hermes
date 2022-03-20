@@ -2,52 +2,48 @@
 
 This file records the planned features for Hermes, in a quick and dirty way.
 
-## Commands
-
-A command to **close leaderboards**.
-
-### Team roles
-
-Create role per team. Comfortably mention an entire team with that role.
-
 ### Team passwords
 
 Store the passwords for not-created-yet teams.
 
-## Server alias
-
-Because "UVa\_-\_Computación\_Paralela\_20/21" is too long and we all know it.
-
-## Admin configuration per guild
+### Admin configuration per guild
 
 A way to set different configurations for different guilds on the same bot.
 
-## Admin documentation
+### Admin documentation
 
 Document the admin's features.
 
-## Student identification
-
-A way to keep track of which student (name and surnames) is which Discord user. Also, automatically giving them some kind of @Student rank.
-
-## Team tracking
+### Team tracking
 
 Get students that aren't part of any team.
 
-## Admin contact
+### Admin contact
 
-A way to contact the admins or the bot developer for help using the bot.
+A way to contact the admins or the bot developer for help using the bot (without being a part of a team).
 
-## Update notifyier
+### Update notifyier
 
 A way for Hermes to notify the admins whenever there's a new version of the software available for download.
 
-## QoL / possible suggestions
+## Long term / currently unlikely
 
-I don't know, these will come up over time...
+Here are the possible features that seem unlikely to ever be implemented due to how the bot is currently bein used in production scenarios. Mainly, implementing more QoL features in the bot would require giving it extra accesses and permissions. However, the current philosophy in the real scenarios where the bot is bein used is to keep its permissions and accesses to the bare minimum, for security reasons.
 
-Maybe a way to count reactions. Or a way to make the students identify themselves before using the server. A way to make/store threads; a way to ask questions...
+### Team roles
 
-## Long term -- Overriding the python client
+**(Requires extra permissions for the bot.)**
+
+Create role per team. Comfortably mention an entire team with that role.
+
+### Student identification
+
+**(Requires the bot to join the server before any student + some extra setup in the server + identifying via bot commands; or the bot to read previous messages.)**
+
+A way to keep track of which student (name and surnames) is which Discord user. Also, automatically giving them some kind of @Student rank.
+
+### Overriding the python client
+
+**(Requires a huge effort and currently it wouldn't provide any clear benefits.)**
 
 Just get rid of the python client and do the things directly from Discord/node.js!
