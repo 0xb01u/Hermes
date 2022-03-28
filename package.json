@@ -1,6 +1,6 @@
 {
   "name": "hermes",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "description": "Discord bot serving as intermediary with http://frontendv.infor.uva.es/ and other different request queues.",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/0xb01u/Hermes#readme",
   "dependencies": {
+    "cron": "^1.8.2",
     "discord.js": "^12.5.1",
     "table-scraper": "^1.0.3"
   }
