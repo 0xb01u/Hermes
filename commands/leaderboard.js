@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 const Leaderboard = require("../objects/Leaderboard.js")
+const CronTime = require("cron").CronTime;
 
 exports.run = async (bot, msg, args, serverID) => {
 	// Server-only command:
@@ -23,15 +24,31 @@ exports.run = async (bot, msg, args, serverID) => {
 		);
 	}
 
-	// Close leaderboard
+	// Close leaderboard:
 	if (args[0] === "close") {
 		let name = args[1];
 		if (!fs.existsSync(`./guilds/${serverID}/${name}.json`)) {
 			let reply = await msg.reply(`leaderboard ${name} does't exist on the server!`);
 			return msg.delete({ timeout: 30000 });
 		}
+
 		let lb = Leaderboard.fromJSON(JSON.parse(fs.readFileSync(`./guilds/${serverID}/${name}.json`)));
 		lb.close();
+
+		if (`${serverID}/${name}` in global.refreshingLeaderboards) {
+			/* Refresh leaderboard in the next second to show the red color in Discord */
+			global.refreshingLeaderboards[`${serverID}/${name}`].setTime(
+				new CronTime(new Date(Date.now() + 1000)));
+			global.refreshingLeaderboards[`${serverID}/${name}`].start();
+
+			/* Stop cron job and delete cron object */
+			setTimeout(() => {
+					global.refreshingLeaderboards[`${serverID}/${name}`].stop();
+					delete global.refreshingLeaderboards[`${serverID}/${name}`];
+				}, 1100
+			);
+		}
+
 		return global.log(msg, serverID,
 			`Closed leaderboard ${name}.`
 		);

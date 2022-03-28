@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const http = require("https");
 const fs = require("fs");
+const CronJob = require("cron").CronJob;
 
 var env = JSON.parse(fs.readFileSync("env.json"));
 for (let key in env) {
@@ -301,8 +302,7 @@ bot.on("messageReactionAdd", async (reaction, user) => {
 
 	if (reaction.message.channel.type === "dm") {
 		refreshRequest(reaction, user);
-	}
-	else {
+	} else {
 		refreshLeaderboard(reaction, user);
 	}
 });
@@ -316,8 +316,7 @@ bot.on("messageReactionRemove", async (reaction, user) => {
 
 	if (reaction.message.channel.type === "dm") {
 		refreshRequest(reaction, user);
-	}
-	else {
+	} else {
 		refreshLeaderboard(reaction, user);
 	}
 });
@@ -570,6 +569,12 @@ async function refreshLeaderboard(reaction, user) {
 
 	channel.stopTyping();
 	//console.log(`Updated ${name}.`);
+	
+	if (!(`${server.id}/${name}` in global.refreshingLeaderboards)) {
+		global.refreshingLeaderboards[`${server.id}/${name}`] =
+			new CronJob("0 * * * * *", () => refreshLeaderboard(reaction, null),
+			null, true);
+	}
 }
 
 /**
@@ -629,6 +634,9 @@ global.getTeam = function getTeam(tm, guildID) {
 	return Team.fromJSON(JSON.parse(fs.readFileSync(`./teams/${guildID}/${team}.json`)));
 }
 
+/**
+ * Logs a message to a designated channel in a given guild.
+ */
 global.log = async function log(triggerMsg, serverID, content) {
 	let server = await bot.guilds.fetch(serverID);
 	let channel;
@@ -654,6 +662,11 @@ global.log = async function log(triggerMsg, serverID, content) {
 		}
 	}
 }
+
+/**
+ * List of active leaderboards with a cron job updating them.
+ */
+global.refreshingLeaderboards = {};
 
 /**
  * Sends a notification message to all students in a team.
