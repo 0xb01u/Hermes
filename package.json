@@ -1,6 +1,6 @@
 {
   "name": "hermes",
-  "version": "1.5.6",
+  "version": "1.6.0",
   "description": "Discord bot serving as intermediary with http://frontendv.infor.uva.es/ and other different request queues.",
   "main": "index.js",
   "scripts": {
