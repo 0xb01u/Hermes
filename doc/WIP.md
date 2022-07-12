@@ -28,7 +28,7 @@ A way for Hermes to notify the admins whenever there's a new version of the soft
 
 ## Long term / currently unlikely
 
-Here are the possible features that seem unlikely to ever be implemented due to how the bot is currently bein used in production scenarios. Mainly, implementing more QoL features in the bot would require giving it extra accesses and permissions. However, the current philosophy in the real scenarios where the bot is bein used is to keep its permissions and accesses to the bare minimum, for security reasons.
+Here are the possible features that seem unlikely to ever be implemented due to how the bot is currently being used in production scenarios. Mainly, implementing more QoL features in the bot would require giving it extra accesses and permissions. However, the current philosophy in the real scenarios where the bot is being used is to keep its permissions and accesses to the bare minimum, for security reasons.
 
 ### Team roles
 
