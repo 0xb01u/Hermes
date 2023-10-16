@@ -42,7 +42,7 @@ After this, your bot will have succesfully joined the specified server.
  ```
  npm --version
  ```
- 3. Install python2. (Yes, python**2**. It's not my fault.)
+ 3. Install [Python 3](https://www.python.org/downloads/). (Old versions of the Tablón client used Python 2, but that should not be the case for any currently-used version.)
  4. Make sure the DNS lookup service for your system is working fine; specifically, for the URLs `cdn.discordapp.com` and `discord.com`. In case of doubt, configure your system to automatically resolve those hostnames to their specific IP addresses, without consulting its DNS server. You can check their respective IP addresses by running on a terminal:
  ```sh
  host cdn.discordapp.com
