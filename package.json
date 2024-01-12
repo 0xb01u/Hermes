@@ -1,6 +1,6 @@
 {
   "name": "hermes",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Discord bot serving as intermediary with http://frontendv.infor.uva.es/ and other different request queues.",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/0xb01u/Hermes.git"
   },
-  "author": "B0lu",
+  "author": "Bolu",
   "license": "CC0 1.0 Universal",
   "bugs": {
     "url": "https://github.com/0xb01u/Hermes/issues"
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/0xb01u/Hermes#readme",
   "dependencies": {
     "cron": "^1.8.2",
-    "discord.js": "^12.5.1",
+    "discord.js": "^14.14.1",
     "table-scraper": "^1.0.3"
   }
 }

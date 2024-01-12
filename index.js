@@ -9,7 +9,14 @@ for (let key in env) {
 }
 delete env;
 
-const bot = new Discord.Client();
+const bot = new Discord.Client({
+	intents: [
+		Discord.GatewayIntentBits.Guilds,
+		Discord.GatewayIntentBits.GuildMessages,
+		Discord.GatewayIntentBits.GuildMembers,
+		Discord.GatewayIntentBits.MessageContent,
+	],
+});
 bot.login(process.env.TOKEN);
 
 bot.on("ready", async () => {
@@ -41,7 +48,7 @@ bot.on("ready", async () => {
 		}
 
 		// Rename to "Hermes":
-		// (await guild.members.fetch(bot.user.id)).setNickname("Hermes");
+		//(await guild.members.fetch(bot.user.id)).setNickname("Hermes");
 
 		// New server found: add to database.
 		if (!(guild.id in guildMap)) {
@@ -57,7 +64,7 @@ bot.on("ready", async () => {
 			for (let member of (await guild.members.fetch()).array()) {
 				if (!member.user.bot) {
 					if (!fs.existsSync(`./users/${member.id}.json`)) {
-						let student = new Student(member.id, guildName, member.user.username, member.user.discriminator);
+						new Student(member.id, guildName, member.user.username, member.user.discriminator);
 					} else {
 						global.getStudent(member.id).addServer(guildName);
 					}
@@ -106,7 +113,7 @@ bot.on("guildCreate", async guild => {
 	for (let member of (await guild.members.fetch()).array()) {
 		if (!member.user.bot) {
 			if (!fs.existsSync(`./users/${member.id}.json`)) {
-				let student = new Student(member.id, guildName, member.user.username, member.user.discriminator);
+				new Student(member.id, guildName, member.user.username, member.user.discriminator);
 			} else {
 				global.getStudent(member.id).addServer(guildName);
 			}
@@ -119,11 +126,9 @@ bot.on("guildCreate", async guild => {
  * for the server.
  */
 bot.on("guildMemberAdd", member => {
-	let guildMap = JSON.parse(fs.readFileSync(`./guilds/guildMap.json`));
-
 	if (!fs.existsSync(`./users/${member.id}.json`)) {
 		const Student = require("./objects/Student.js");
-		let student = new Student(member.id, member.guild.name.replace(/ /g, "_"), member.user.username, member.user.discriminator);		
+		new Student(member.id, member.guild.name.replace(/ /g, "_"), member.user.username, member.user.discriminator);		
 	} else {
 		global.getStudent(member.id).addServer(member.guild.name.replace(/ /g, "_"));
 	}
@@ -132,7 +137,7 @@ bot.on("guildMemberAdd", member => {
 /**
  * Message and command handling.
  */
-bot.on("message", async msg => {
+bot.on("messageCreate", async msg => {
 	if (msg.author.bot) return;
 
 	if (msg.attachments.size == 1) {
@@ -154,18 +159,18 @@ bot.on("message", async msg => {
 					try {
 						delete require.cache[require.resolve(`./commands/test_${""}.js`)];
 
-						await bot.user.setPresence({ activity: {name: `EXECUTING.`}, status: `dnd` });
+						bot.user.setPresence({ activity: {name: `EXECUTING.`}, status: `dnd` });
 						await require(`./commands/test_${""}.js`).run(bot, msg, args, att.name);
-						await bot.user.setPresence({ activity: {name: ``}, status: `online` });
+						bot.user.setPresence({ activity: {name: ``}, status: `online` });
 					} catch (e) {
 						if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
-						await bot.user.setPresence({ activity: {name: ``}, status: `online` });
+						bot.user.setPresence({ activity: {name: ``}, status: `online` });
 						msg.reply("there was an error trying to send your program to the queue :(");
 						console.error(e.stack);
 					}
 				});
 
-				response.on("error", e => {
+				response.on("error", _ => {
 					msg.reply(
 						"I'm sorry, there was a problem trying to download your file :cry:\n" +
 						"Can you send it again, please?"
@@ -210,7 +215,7 @@ bot.on("message", async msg => {
 					msg.reply("the passwords for the teams have been updated succesfully!");
 				});
 
-				response.on("error", e => {
+				response.on("error", _ => {
 					msg.reply("there was an error trying to update the passwords for the teams >:(");
 				});
 			});
@@ -284,7 +289,7 @@ bot.on("message", async msg => {
 		let student = global.getStudent(msg.author.id);
 		if (student != null) {
 			for (let server in student.credentials) {
-				// TODO: this is an ugly workaround.
+				// FIXME: this is an ugly workaround.
 				global.log(msg, server,
 					`Received a private message.`
 				);
@@ -325,12 +330,11 @@ bot.on("error", (e) => console.error(e));
 bot.on("warn", (e) => console.warn(e));
 //bot.on("debug", (e) => console.info(e));
 
-async function refreshRequest(reaction, user) {
+async function refreshRequest(reaction, _) {
 	let channel = reaction.message.channel;
 
 	channel.startTyping();
 
-	let msg = reaction.message;
 	let src = reaction.message.embeds[0];
 	let footer = src.footer.text.split("#");
 	let serverName = footer[0];
@@ -352,7 +356,7 @@ async function refreshRequest(reaction, user) {
 	channel.stopTyping();
 }
 
-async function refreshLeaderboard(reaction, user) {
+async function refreshLeaderboard(reaction, _) {
 	if (reaction.message.channel.name !== process.env.LB_CHANNEL) return;
 
 	let server = reaction.message.guild;
@@ -376,7 +380,7 @@ async function refreshLeaderboard(reaction, user) {
 			.map(entry => entry.User);
 		prevTable = lb.table;
 		prevRefIndex = prevTable.map((e, i) => e.Pos == "" ? i : "").filter(String).reverse();
-			// Reversed so earlier Refs are first.
+		// Reversed so earlier Refs are first.
 	}
 
 	let table = await lb.refresh();
@@ -419,7 +423,7 @@ async function refreshLeaderboard(reaction, user) {
 
 					// Fetch news channel and send message:
 					let channel;
-					for (let ch of (await bot.guilds.fetch(serverID)).channels.cache.array()) {
+					for (let ch of (await bot.guilds.fetch(server.id)).channels.cache.array()) {
 						if (ch.name === process.env.BOT_NEWS) {
 							channel = ch;
 							break;
@@ -501,20 +505,12 @@ async function refreshLeaderboard(reaction, user) {
 				);
 			}
 			for (let noMore of noTop) {
-				let despacito = await notifyTeamPrivately(noMore, server.id,
+				let slow = await notifyTeamPrivately(noMore, server.id,
 					`Oh no! Someone has got a better position than you on ${lb.name}, and you are no longer ` +
 					`part of the top${process.env.LEADERS}. :sob:`
 				);
-				for (let m of despacito) {
-					m.react("🇩");
-					m.react("🇪");
-					m.react("🇸");
-					m.react("🇵");
-					m.react("🇦");
-					m.react("🇨");
-					m.react("🇮");
-					m.react("🇹");
-					m.react("🇴");
+				for (let m of slow) {
+					m.react("🐢");
 				}
 			}
 		}
