@@ -1,17 +1,18 @@
 const fs = require("fs");
+const { PermissionFlagsBits, ChannelType } = require("discord.js");
 
 const Leaderboard = require("../objects/Leaderboard.js")
 const CronTime = require("cron").CronTime;
 
 exports.run = async (bot, msg, args, serverID) => {
 	// Server-only command:
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type === ChannelType.DM) {
 		return msg.author.send("That is a server-only command!");
 	}
 
 	// TODO: Role
 	// "Admin"-only command:
-	if (!msg.member.hasPermission("MANAGE_GUILD")) {
+	if (!msg.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 		return msg.reply("who, me?");
 	}
 
@@ -83,7 +84,7 @@ exports.run = async (bot, msg, args, serverID) => {
 
 	// Fetch destination channel:
 	let channel;
-	for (let ch of msg.guild.channels.cache.array()) {
+	for (let ch of msg.guild.channels.cache.values()) {
 		if (ch.name === process.env.LB_CHANNEL) {
 			channel = ch;
 

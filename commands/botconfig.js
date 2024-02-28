@@ -1,20 +1,21 @@
 const fs = require("fs");
+const { PermissionFlagsBits, ChannelType } = require("discord.js");
 
 exports.run = async (bot, msg, args) => {
 	// Server-only command:
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type === ChannelType.DM) {
 		return msg.author.send("That is a server-only command!");
 	}
 
 	// TODO: Role
 	// "Admin"-only command:
-	if (!msg.member.hasPermission("MANAGE_GUILD")) {
+	if (!msg.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 		return msg.reply("nice try.");
 	}
 
 	// Channel-specific command:
 	if (msg.channel.name !== process.env.BOT_CHANNEL) {
-		msg.delete();
+		//msg.delete();
 		return msg.author.send(
 			`Pssst! You used the \`${process.env.PRE}botconfig\` command in the wrong channel!\n`
 			+ `It must be used in #${process.env.BOT_CHANNEL}.`

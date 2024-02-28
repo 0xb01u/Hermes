@@ -1,10 +1,12 @@
 const fs = require("fs");
+const { ChannelType } = require("discord.js");
 
 exports.run = async (bot, msg, args) => {
-	if (msg.channel.type !== "dm")  {
-		let reply = await msg.reply("this command can only be used via DM. Message me directly!");
+	if (msg.channel.type !== ChannelType.DM) {
+		let reply = await msg.reply("that command can only be used via DM. Message me directly!");
 		//reply.delete({ timeout: 10000 });
 		//msg.delete({ timeout: 10000 });
+		return;
 	}
 
 	if (args.length < 1) {

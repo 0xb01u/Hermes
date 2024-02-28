@@ -1,6 +1,8 @@
+const { PermissionFlagsBits, ChannelType } = require("discord.js");
+
 exports.run = async (bot, msg, args) => {
 	// Server-only command:
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type === ChannelType.DM) {
 		return msg.author.send("That is a server-only command!");
 	}
 
@@ -9,13 +11,13 @@ exports.run = async (bot, msg, args) => {
 
 	// TODO: Role
 	// "Admin"-only command:
-	if (!msg.member.hasPermission("MANAGE_GUILD")) {
+	if (!msg.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 		return msg.reply("I'm not your worker, duh!");
 	}
 
 	let channel = msg.channel;
 	if (args[0].match(/^<#\d+>$/)) {
-		for (let ch of msg.guild.channels.cache.array()) {
+		for (let ch of msg.guild.channels.cache.values()) {
 			if (ch.id === args[0].match(/^<#(\d+)>$/)[1]) {
 				channel = ch;
 				break;

@@ -1,17 +1,17 @@
 const fs = require("fs");
-const { MessageAttachment } = require("discord.js");
+const { MessageAttachment, PermissionFlagsBits, ChannelType } = require("discord.js");
 
 const Team = require("../objects/Team.js")
 
 exports.run = async (bot, msg, args) => {
 	// Server-only command:
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type === ChannelType.DM) {
 		return msg.author.send("That is a server-only command!");
 	}
 
 	// TODO: Role
 	// "Admin"-only command:
-	if (!msg.member.hasPermission("MANAGE_GUILD")) {
+	if (!msg.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 		return msg.reply("why'd you want to dump your team?? :(");
 	}
 
@@ -55,7 +55,7 @@ exports.run = async (bot, msg, args) => {
 
 		// Send message(s):
 		let sent = false;
-		for (let ch of msg.guild.channels.cache.array()) {
+		for (let ch of msg.guild.channels.cache.values()) {
 			if (ch.id === args[0].slice(2, args[0].length - 1)) {
 				for (let m of msgArray) {
 					ch.send(m);

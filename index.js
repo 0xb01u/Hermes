@@ -11,11 +11,13 @@ delete env;
 
 const bot = new Discord.Client({
 	intents: [
+		Discord.GatewayIntentBits.DirectMessages,
 		Discord.GatewayIntentBits.Guilds,
 		Discord.GatewayIntentBits.GuildMessages,
 		Discord.GatewayIntentBits.GuildMembers,
 		Discord.GatewayIntentBits.MessageContent,
 	],
+	partials: [Discord.Partials.Message, Discord.Partials.Channel],
 });
 bot.login(process.env.TOKEN);
 
@@ -37,7 +39,7 @@ bot.on("ready", async () => {
 	// Cerberus image taken from: https://imgbin.com/png/XKxfm3Sc/hades-dog-cerberus-greek-mythology-graphics-png
 	// Hermes image taken from: https://www.theoi.com/Gallery/M12.5.html
 
-	for (let guild of bot.guilds.cache.array()) {
+	for (let guild of bot.guilds.cache.values()) {
 		console.log(`Hermes entered the guild ${guild.name} (${guild.id}).`);
 
 		if (!fs.existsSync(`./guilds/${guild.id}`)) fs.mkdirSync(`./guilds/${guild.id}`);
@@ -61,7 +63,7 @@ bot.on("ready", async () => {
 			 */
 			const Student = require("./objects/Student.js");
 			// IMPORTANT: Intents (GUILD_MEMBERS)
-			for (let member of (await guild.members.fetch()).array()) {
+			for (let member of (await guild.members.fetch()).values()) {
 				if (!member.user.bot) {
 					if (!fs.existsSync(`./users/${member.id}.json`)) {
 						new Student(member.id, guildName, member.user.username, member.user.discriminator);
@@ -81,7 +83,7 @@ bot.on("ready", async () => {
 		/*
 		 * Fetch messages on the leaderboard channels:
 		 */
-		for (let ch of guild.channels.cache.array()) {
+		for (let ch of guild.channels.cache.values()) {
 			if (ch.name === process.env.LB_CHANNEL) {
 				ch.messages.fetch({ limit: 20 });
 				break;
@@ -110,7 +112,7 @@ bot.on("guildCreate", async guild => {
 
 	const Student = require("./objects/Student.js");
 
-	for (let member of (await guild.members.fetch()).array()) {
+	for (let member of (await guild.members.fetch()).values()) {
 		if (!member.user.bot) {
 			if (!fs.existsSync(`./users/${member.id}.json`)) {
 				new Student(member.id, guildName, member.user.username, member.user.discriminator);
@@ -144,7 +146,7 @@ bot.on("messageCreate", async msg => {
 		/*
 		 * Sending a program to the queue.
 		 */
-		if (msg.channel.type === "dm") {
+		if (msg.channel.type === Discord.ChannelType.DM) {
 			// Download attachement:
 			let att = msg.attachments.first();
 			let args = msg.content.replaceAll("\n", " ").split(" ");
@@ -180,7 +182,7 @@ bot.on("messageCreate", async msg => {
 		/*
 		 * Sending a team-password file to update the teams.
 		 */
-		} else if (msg.member.hasPermission("MANAGE_GUILD")
+		} else if (msg.member.permissions.has(PermissionFlagsBits.ManageGuild)
 				&& (msg.attachments.first().name.match(/\.(teams|pass|passwd|passwords?)$/))) {
 			if (msg.channel.name !== process.env.BOT_CHANNEL) {
 				//return msg.delete({ timeout: 0 });
@@ -236,7 +238,7 @@ bot.on("messageCreate", async msg => {
 		if (cmd === "test_") {
 			return msg.reply(
 				"Congratulations! You've stumbled into an `ìf` block " +
-				"that is there to keep the bot from crashing. Auch! " +
+				"that is there to keep the bot from crashing. Ouch! " +
 				"You could have caused so much harm :(\n" +
 				"I wonder how many people will find this message..."
 			);
@@ -245,9 +247,19 @@ bot.on("messageCreate", async msg => {
 		// Retrieve the server ID:
 		let serverID = null;
 
-		if (msg.channel.type === "dm") { // TODO: admins outside guilds.
+		if (msg.channel.type === Discord.ChannelType.DM) { // TODO: admins outside guilds.
 			if (!fs.existsSync(`./guilds/guildMap.json`)) {
 				return msg.reply(`sorry, I must join at least one server before executing any commands.`);
+			}
+
+			if (args.length === 0 && require(`./commands/${cmd}.js`).requiresServerID) {
+				// TODO: rework aliases.
+				// TODO: explain this better.
+				return msg.reply(
+					`That command requires specifying a target server to be executed. ` +
+					`To specify a target server, you must provide a valid alias for the server as the ` +
+					`first argument of the command.`
+				);
 			}
 
 			let student = global.getStudent(msg.author.id);
@@ -256,7 +268,7 @@ bot.on("messageCreate", async msg => {
 				serverID = student.aliases[args.shift()];
 			} else if (require(`./commands/${cmd}.js`).requiresServerID) {
 				return msg.reply(
-					`unknown server alias: \`${guildName}\`.\nMaybe try using the name of the server but replacing ` +
+					`Unknown server alias: \`${guildName}\`.\nMaybe try using the name of the server but replacing ` +
 					`all the spaces by underscores (\`\_\`). For example: if the name of the server is ` + 
 					`\`UVa - Server 1\`, use \`UVa_-_Server_1\` as the alias.\n` +
 					`Also, revise you wrote the alias correctly. Maybe you used uppercase where it should be ` +
@@ -277,7 +289,7 @@ bot.on("messageCreate", async msg => {
 
 		} catch (e) {
 			// If the command couldn't be executed.
-			if (msg.channel.type === "dm") msg.reply("nonexistent command.");
+			if (msg.channel.type === Discord.ChannelType.DM) msg.reply("nonexistent command.");
 			console.error(e.stack);
 		}
 	}
@@ -285,7 +297,7 @@ bot.on("messageCreate", async msg => {
 	/*
 	 * Log of messages sent to Hermes:
 	 */
-	else if (msg.channel.type === "dm") {
+	else if (msg.channel.type === Discord.ChannelType.DM) {
 		let student = global.getStudent(msg.author.id);
 		if (student != null) {
 			for (let server in student.credentials) {
@@ -305,7 +317,7 @@ bot.on("messageReactionAdd", async (reaction, user) => {
 	if (reaction.message.author.id !== bot.user.id) return;
 	if (reaction.message.embeds.length === 0) return;
 
-	if (reaction.message.channel.type === "dm") {
+	if (reaction.message.channel.type === Discord.ChannelType.DM) {
 		refreshRequest(reaction, user);
 	} else {
 		refreshLeaderboard(reaction, user);
@@ -319,7 +331,7 @@ bot.on("messageReactionRemove", async (reaction, user) => {
 	if (reaction.message.author.id !== bot.user.id) return;
 	if (reaction.message.embeds.length === 0) return;
 
-	if (reaction.message.channel.type === "dm") {
+	if (reaction.message.channel.type === Discord.ChannelType.DM) {
 		refreshRequest(reaction, user);
 	} else {
 		refreshLeaderboard(reaction, user);
@@ -398,7 +410,7 @@ async function refreshLeaderboard(reaction, _) {
 
 		// Fetch news channel:
 		let newsCh;
-		for (let ch of msg.guild.channels.cache.array()) {
+		for (let ch of msg.guild.channels.cache.values()) {
 			if (ch.name === process.env.BOT_NEWS) {
 				newsCh = ch;
 				break;
@@ -423,7 +435,7 @@ async function refreshLeaderboard(reaction, _) {
 
 					// Fetch news channel and send message:
 					let channel;
-					for (let ch of (await bot.guilds.fetch(server.id)).channels.cache.array()) {
+					for (let ch of (await bot.guilds.fetch(server.id)).channels.cache.values()) {
 						if (ch.name === process.env.BOT_NEWS) {
 							channel = ch;
 							break;
@@ -536,7 +548,7 @@ async function refreshLeaderboard(reaction, _) {
 
 	/* Leaderboard (embeds) update*/
 	// Get all the multiple messages forming the leaderboard:
-	let lbMsgs = channel.messages.cache.array()
+	let lbMsgs = channel.messages.cache.values()
 		.filter(msg => msg.embeds.length > 0 && msg.embeds[0].footer.text === name)
 		.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 	// Get the desired column for the leaderboard:
@@ -637,7 +649,7 @@ global.log = async function log(triggerMsg, serverID, content) {
 	let server = await bot.guilds.fetch(serverID);
 	let channel;
 
-	for (let ch of await server.channels.cache.array()) {
+	for (let ch of await server.channels.cache.values()) {
 		if (ch.name === process.env.BOT_CHANNEL) {
 			channel = ch;
 			break;
@@ -698,7 +710,7 @@ async function notifyTeamPublicly(tm, serverID, msg) {
 
 	// Fetch news channel:
 	let channel;
-	for (let ch of (await bot.guilds.fetch(serverID)).channels.cache.array()) {
+	for (let ch of (await bot.guilds.fetch(serverID)).channels.cache.values()) {
 		if (ch.name === process.env.BOT_NEWS) {
 			channel = ch;
 			break;

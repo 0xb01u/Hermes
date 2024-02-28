@@ -1,16 +1,17 @@
 const fs = require("fs");
+const { PermissionFlagsBits, ChannelType } = require("discord.js");
 
 const Team = require("../objects/Team.js");
 
 exports.run = async (bot, msg, args) => {
 	// Server-only command:
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type === ChannelType.DM) {
 		return msg.author.send("That is a server-only command!");
 	}
 
 	// TODO: Role
 	// "Admin"-only command:
-	if (!msg.member.hasPermission("MANAGE_GUILD")) {
+	if (!msg.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
 		return msg.reply("nope.");
 	}
 
