@@ -30,7 +30,7 @@ exports.run = async (bot, msg, args) => {
 	 */
 	if (args.length === 0) {
 		let envCopy = Object.assign({}, env);
-		envCopy.TOKEN = "=== OMITTED ===";
+		envCopy.TOKEN = "=== REDACTED ===";
 
 		delete env;
 		return msg.channel.send(`Current configuration:\n\`\`\`\n${JSON.stringify(envCopy, null, 2)}\`\`\``);
