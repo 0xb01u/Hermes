@@ -182,7 +182,7 @@ bot.on("messageCreate", async msg => {
 		/*
 		 * Sending a team-password file to update the teams.
 		 */
-		} else if (msg.member.permissions.has(PermissionFlagsBits.ManageGuild)
+		} else if (msg.member.permissions.has(Discord.PermissionFlagsBits.ManageGuild)
 				&& (msg.attachments.first().name.match(/\.(teams|pass|passwd|passwords?)$/))) {
 			if (msg.channel.name !== process.env.BOT_CHANNEL) {
 				//return msg.delete({ timeout: 0 });
