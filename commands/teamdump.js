@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { MessageAttachment, PermissionFlagsBits, ChannelType } = require("discord.js");
+const { AttachmentBuilder, PermissionFlagsBits, ChannelType } = require("discord.js");
 
 const Team = require("../objects/Team.js")
 
@@ -74,7 +74,7 @@ exports.run = async (bot, msg, args) => {
 
 	// Send the list of teams as plain text:
 	fs.writeFileSync(`./teams/${msg.guild.id}/teamList.txt`, out);
-	let att = new MessageAttachment(`./teams/${msg.guild.id}/teamList.txt`);
+	let att = new AttachmentBuilder(`./teams/${msg.guild.id}/teamList.txt`);
 	msg.channel.send("List of teams on the server:", att);
 }
 
