@@ -1,4 +1,12 @@
-﻿# Hermes - The Messenger of the Gods
+# This software is outdated and no longer maintained
+
+Please, use the new re-implementation of Hermes found [here](https://github.com/mdccUva/hermes), which uses Rust instead of JavaScript + Node.js.
+
+This version of Hermes is severly outdated and does not work with current versions of Discord.js. The new re-implementation linked above uses an updated framework that supports Discord's current API (including slash commands).
+
+The original README is included below.
+ 
+# Hermes - The Messenger of the Gods
 
 Hermes is a version of [Cerberus](https://github.com/0xb01u/Cerberus/) (a Discord bot) that, instead of simulating http://frontendv.infor.uva.es or similar request queues, serves as intermediary with them.
 
